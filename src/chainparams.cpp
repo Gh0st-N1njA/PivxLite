@@ -54,7 +54,7 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints = 
     boost::assign::map_list_of
-    (0, uint256("0x001"));
+    (0, uint256("000008d0d565c1bc0fa245fc4d8b31f1de1438979c2b3b73234364f60b2673ef"));
 
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
@@ -221,7 +221,7 @@ public:
         genesis.nVersion = 1;
         genesis.nTime = 1588820064;
         genesis.nBits = 0x1e0ffff0;
-        genesis.nNonce = 1203149;
+        genesis.nNonce = 1502666;
 
 
 if(genesis.GetHash() != uint256("0x"))
@@ -249,8 +249,8 @@ if(genesis.GetHash() != uint256("0x"))
       printf("Mainnet block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
 }
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x00000e2dc2b1db786db6578d77c738ae9efabccecffc45f772046c885bced630"));
-        assert(genesis.hashMerkleRoot == uint256("0xd0928a9f84607dfd323b5ad288861d658a866f91bb39c3b57de72514ece925a2"));
+        assert(hashGenesisBlock == uint256("0x000008d0d565c1bc0fa245fc4d8b31f1de1438979c2b3b73234364f60b2673ef"));
+        assert(genesis.hashMerkleRoot == uint256("0x3a2353b4f74192b56cc2cfbbfe49796948f47cece1b9ea3278fd11aed287b4d1"));
 
         vSeeds.clear();
        // vSeeds.push_back(CDNSSeedData("pivxlite.com", "seedhost1.pivxlite.com"));     // Primary DNS Seeder
