@@ -374,6 +374,30 @@ public:
         genesis.nTime = 1577169143;
         genesis.nNonce = 268438;
 
+if(genesis.GetHash() != uint256("0x"))
+{
+      printf("MSearching for genesis block...\n");
+      uint256 hashTarget;
+      hashTarget.SetCompact(genesis.nBits);
+      while(uint256(genesis.GetHash()) > uint256(hashTarget))
+      {
+          ++genesis.nNonce;
+          if (genesis.nNonce == 0)
+          {
+              printf("Mainnet NONCE WRAPPED, incrementing time");
+              std::cout << std::string("Mainnet NONCE WRAPPED, incrementing time:\n");
+              ++genesis.nTime;
+          }
+          if (genesis.nNonce % 10000 == 0)
+          {
+              printf("Mainnet: nonce %08u: hash = %s \n", genesis.nNonce, genesis.GetHash().ToString().c_str());
+          }
+      }
+      printf("Testnet block.nTime = %u \n", genesis.nTime);
+      printf("Testnet block.nNonce = %u \n", genesis.nNonce);
+      printf("Testnet block.hashMerkleRoot: %s\n", genesis.hashMerkleRoot.ToString().c_str());
+      printf("Testnet block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+}
         hashGenesisBlock = genesis.GetHash();
         assert(hashGenesisBlock == uint256("0x000002584580320f08c04c7e02460428ca3b821dcb3a5ac4e5d1cc570f6212b2"));
 
