@@ -54,14 +54,7 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints = 
     boost::assign::map_list_of
-    (0, uint256("00000e2dc2b1db786db6578d77c738ae9efabccecffc45f772046c885bced630"))
-    (10, uint256("0000069f486f9f499438499bdf9d233e194436e9f426f07381b6f764c69f8bec"))
-    (150, uint256("00000009a28e191361d6213ba88286118973084a17ec925dc3c6ba2f16a2c3cb"))
-    (600, uint256("0000000a39eba2f0af1f611702bb8ed9ff90bc0cff6316e86083a378500ca655"))
-    (1250, uint256("2d57f9a4a581e6bf39d20a510277abb66d74d3dc1b225dc50dbd8ade308d4307"))
-    (1630, uint256("54942e3d7d92986143789549692e90aed1345972c0a9dc27914c3bc6866e14ff"))
-    (5000, uint256("a5c3b61f8fafc114d605186c9a909ab6b0d189dbcb2a4eff8d304b2e5e99cb41"))
-    (7135, uint256("b153968c9ad46651ef127c91704f4416e63d1a459edcfb79923b1e27f579d108"));
+    (0, uint256("0x001"));
 
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
@@ -151,12 +144,12 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 4-byte int at any alignment.
          */
-        pchMessageStart[0] = 0x86;
-        pchMessageStart[1] = 0xab;
-        pchMessageStart[2] = 0xed;
-        pchMessageStart[3] = 0xcf;
+        pchMessageStart[0] = 0x60;
+        pchMessageStart[1] = 0xa4;
+        pchMessageStart[2] = 0xfc;
+        pchMessageStart[3] = 0xa7;
+        nDefaultPort = 12122;
         vAlertPubKey = ParseHex("04c71824527cff7dde535017fc15de7ae8038232ef207b8cc824e1ac164a737978143937e3bf7dc3ad9ebd1d455cb8ad4ae4c5070dade82a6d7dc5092f319b7f8f");
-        nDefaultPort = 8233;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // PIVXL starting difficulty is 1 / 2^12
         bnProofOfStakeLimit = ~uint256(0) >> 24;
         bnProofOfStakeLimit_V2 = ~uint256(0) >> 20; // 60/4 = 15 ==> use 2**4 higher limit
@@ -214,47 +207,65 @@ public:
         nFakeSerialBlockheightEnd = INT_MAX;
         nSupplyBeforeFakeSerial = 0 * COIN;   // zerocoin supply at block nFakeSerialBlockheightEnd
 
-        /**
-         * Build the genesis block. Note that the output of the genesis coinbase cannot
-         * be spent as it did not originally exist in the database.
-         *
-         * CBlock(hash=00000ffd590b14, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=e0028e, nTime=1390095618, nBits=1e0ffff0, nNonce=28917698, vtx=1)
-         *   CTransaction(hash=e0028e, ver=1, vin.size=1, vout.size=1, nLockTime=0)
-         *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d01044c5957697265642030392f4a616e2f3230313420546865204772616e64204578706572696d656e7420476f6573204c6976653a204f76657273746f636b2e636f6d204973204e6f7720416363657074696e6720426974636f696e73)
-         *     CTxOut(nValue=50.00000000, scriptPubKey=0xA9037BAC7050C479B121CF)
-         *   vMerkleTree: e0028e
-         */
-        const char* pszTimestamp = "U.S. News & World Report Jan 28 2016 With His Absence, Trump Dominates Another Debate";
+
+        const char* pszTimestamp = "CNN May 06 2020 Supreme embarrassment: The flush heard around the country";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         txNew.vout[0].nValue = 1 * COIN;
-        txNew.vout[0].scriptPubKey = CScript() << ParseHex("04c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9") << OP_CHECKSIG;
+        txNew.vout[0].scriptPubKey = CScript() << ParseHex("045C39AE04ECDC90D0055C78774D12BC406F5C0521B8B9F4E99201FB576205543D32C66CA5F55E33F1024724873EA04B83524C69D187C7C418ACAE59B8A5F868D6") << OP_CHECKSIG;
         genesis.vtx.push_back(txNew);
         genesis.hashPrevBlock = 0;
         genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
         genesis.nVersion = 1;
-        genesis.nTime = 1577168939;
+        genesis.nTime = 1588820064;
         genesis.nBits = 0x1e0ffff0;
-        genesis.nNonce = 2647271;
+        genesis.nNonce = 1203149;
 
+
+if(genesis.GetHash() != uint256("0x"))
+{
+      printf("MSearching for genesis block...\n");
+      uint256 hashTarget;
+      hashTarget.SetCompact(genesis.nBits);
+      while(uint256(genesis.GetHash()) > uint256(hashTarget))
+      {
+          ++genesis.nNonce;
+          if (genesis.nNonce == 0)
+          {
+              printf("Mainnet NONCE WRAPPED, incrementing time");
+              std::cout << std::string("Mainnet NONCE WRAPPED, incrementing time:\n");
+              ++genesis.nTime;
+          }
+          if (genesis.nNonce % 10000 == 0)
+          {
+              printf("Mainnet: nonce %08u: hash = %s \n", genesis.nNonce, genesis.GetHash().ToString().c_str());
+          }
+      }
+      printf("Mainnet block.nTime = %u \n", genesis.nTime);
+      printf("Mainnet block.nNonce = %u \n", genesis.nNonce);
+      printf("Mainnet block.hashMerkleRoot: %s\n", genesis.hashMerkleRoot.ToString().c_str());
+      printf("Mainnet block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+}
         hashGenesisBlock = genesis.GetHash();
         assert(hashGenesisBlock == uint256("0x00000e2dc2b1db786db6578d77c738ae9efabccecffc45f772046c885bced630"));
         assert(genesis.hashMerkleRoot == uint256("0xd0928a9f84607dfd323b5ad288861d658a866f91bb39c3b57de72514ece925a2"));
 
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("pivxlite.com", "seedhost1.pivxlite.com"));     // Primary DNS Seeder
-        vSeeds.push_back(CDNSSeedData("pivxlite.com", "seedhost2.pivxlite.com"));    // Secondary DNS Seeder
+       // vSeeds.push_back(CDNSSeedData("pivxlite.com", "seedhost1.pivxlite.com"));     // Primary DNS Seeder
+       // vSeeds.push_back(CDNSSeedData("pivxlite.com", "seedhost2.pivxlite.com"));    // Secondary DNS Seeder
         
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 58);     // starting with 'Q'
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 13);
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 23);  //starting with A
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18);  //starting with 8
         base58Prefixes[STAKING_ADDRESS] = std::vector<unsigned char>(1, 63);     // starting with 'S'
-        base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x02)(0x2D)(0x25)(0x33).convert_to_container<std::vector<unsigned char> >();
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x02)(0x21)(0x31)(0x2B).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 213);
+        //Mainnet pubkey starts with 'anpb'
+        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x02)(0xbe)(0x89)(0xf4).convert_to_container<std::vector<unsigned char> >();
+        //Mainnet privkey start with 'anpv'
+        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x02)(0xb6)(0xf6)(0x1a).convert_to_container<std::vector<unsigned char> >();
         // BIP44 coin type is from https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-        base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x80)(0x00)(0x00)(0x77).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x80)(0x00)(0x0f)(0xc9).convert_to_container<std::vector<unsigned char> >();
 
         vFixedSeeds.clear();
         //convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
