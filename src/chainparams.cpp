@@ -498,10 +498,10 @@ public:
 
         //! Modify the regtest genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1577169143;
-        genesis.nNonce = 268438;
+        genesis.nNonce = 454267;
         
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x000002584580320f08c04c7e02460428ca3b821dcb3a5ac4e5d1cc570f6212b2"));
+        assert(hashGenesisBlock == uint256("0x000005350f609d8dee013062226f9459d859d95db8023623b8c22b07a322e565"));
         //assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
 
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
